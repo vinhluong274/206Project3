@@ -17,6 +17,7 @@ import tweepy
 import twitter_info # same deal as always...
 import json
 import sqlite3
+import twitter_info
 
 ## Your name: Vinh Luong
 ## The names of anyone you worked with on this project:
@@ -49,19 +50,36 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 
 CACHE_FNAME = "206_APIsAndDBs_cache.json"
 # Put the rest of your caching setup here:
-
-
+try:
+    cache_file = open(CACHE_FNAME, 'r') # Try to read the data from the file
+    cache_contents = cache_file.read()  # If it's there, get it into a string
+    CACHE_DICTION = json.loads(cache_contents) # And then load it into a dictionary
+    cache_file.close() # Close the file, we're good, we got the data in a dictionary.
+except:
+    CACHE_DICTION = {}
 
 # Define your function get_user_tweets here:
-
-
-
-
+def get_user_tweets(user):
+    if user in CACHE_DICTION:
+        print("Data was in the cache \n")
+        return CACHE_DICTION[user]
+    else:
+        print("Making a request for new data...\n")
+        data = api.user_timeline(user)
+        CACHE_DICTION[user] =  data
+        dumped_json_cache = json.dumps(CACHE_DICTION)
+        fw = open(CACHE_FNAME,"w")
+        fw.write(dumped_json_cache)
+        fw.close() # Close the open file
+        return CACHE_DICTION[user]
 
 # Write an invocation to the function for the "umich" user timeline and
 # save the result in a variable called umich_tweets:
-
-
+umich_tweets = get_user_tweets("umich")
+for a in umich_tweets:
+		print("TEXT: ", a['text'])
+		print("CREATED AT: : ", a['created_at'])
+		print("\n")
 
 
 ## Task 2 - Creating database and loading data into database
@@ -72,6 +90,28 @@ CACHE_FNAME = "206_APIsAndDBs_cache.json"
 # mentioned in the umich timeline, that Twitter user's info should be
 # in the Users table, etc.
 
+conn = sqlite3.connect('206_APIsAndDBs.sqlite')
+cur = conn.cursor()
+
+cur.execute('DROP TABLE IF EXISTS Users')
+cur.execute('''CREATE TABLE "Users" (
+    "user_id" TEXT PRIMARY KEY NOT NULL UNIQUE,
+    "screen_name" TEXT,
+    "num_favs" INTEGER,
+    "description" TEXT
+    ) ''')
+
+cur.execute('DROP TABLE IF EXISTS Tweets')
+cur.execute('''CREATE TABLE "Tweets" (
+    "tweet_id" TEXT PRIMARY KEY NOT NULL UNIQUE,
+    "text" TEXT,
+    "user_posted" TEXT,
+    "time_posted" DATETIME,
+    "retweets" INTEGER,
+    FOREIGN KEY (user_posted) REFERENCES Users(user_id)
+    ) ''')
+
+conn.commit()
 
 
 ## You should load into the Tweets table:

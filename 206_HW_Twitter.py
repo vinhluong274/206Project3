@@ -90,9 +90,6 @@ def getTwitterWithCaching(query):
         fw.write(dumped_json_cache)
         fw.close() # Close the open file
         return CACHE_DICTION[query]
-        except:
-            print("Wasn't in cache and wasn't valid search either")
-            return None
 
 
 ## 2. Write a function to get twitter data that works with the caching pattern,
@@ -108,6 +105,7 @@ def getTwitterWithCaching(query):
 for x in range(3): #allows the user to search 3 times
     search = input("Please enter what your Tweet term: ")
     tweet_result = getTwitterWithCaching(search)
+    print(type(tweet_result))
     for a in tweet_result["statuses"][:5]:# iterates through the 5 most recent tweets
         print("TEXT: ", a['text'])
         print("CREATED AT: : ", a['created_at'])
