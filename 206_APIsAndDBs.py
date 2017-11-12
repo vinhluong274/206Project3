@@ -91,7 +91,7 @@ for a in umich_tweets:
 # in the Users table, etc.
 
 conn = sqlite3.connect('206_APIsAndDBs.sqlite')
-cur = conn.cursor()
+cur = conn.cursor() #initiate sqlite connection
 
 cur.execute('DROP TABLE IF EXISTS Users')
 cur.execute('''CREATE TABLE "Users" (
@@ -99,7 +99,7 @@ cur.execute('''CREATE TABLE "Users" (
     "screen_name" TEXT,
     "num_favs" INTEGER,
     "description" TEXT
-    ) ''')
+    ) ''') #user_id must be unique as it is a string
 
 cur.execute('DROP TABLE IF EXISTS Tweets')
 cur.execute('''CREATE TABLE "Tweets" (
