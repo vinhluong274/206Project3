@@ -130,7 +130,17 @@ for a in umich_tweets:
 
     mentions = a["entities"]["user_mentions"]
     for name in mentions:
-        print(name["screen_name"])
+        User = name["screen_name"]
+        print(User)
+        info = api.get_user(User)
+        cur.execute('''INSERT OR IGNORE INTO Users (
+                        user_id,
+                        screen_name,
+                        num_favs,
+                        description)
+                        VALUES (?,?,?,?)
+                        ''', (info["id_str"], info["screen_name"], info["favourites_count"], info["description"]))
+
     cur.execute('''INSERT INTO Tweets (
                     tweet_id,
                     text,
