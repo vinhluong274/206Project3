@@ -111,7 +111,7 @@ cur.execute('''CREATE TABLE "Tweets" (
     FOREIGN KEY (user_posted) REFERENCES Users(user_id)
     ) ''')
 
-conn.commit()
+
 
 
 ## You should load into the Tweets table:
@@ -119,6 +119,27 @@ conn.commit()
 # umich timeline.
 # NOTE: Be careful that you have the correct user ID reference in
 # the user_id column! See below hints.
+
+for a in umich_tweets:
+    tweet_id = a["id_str"]
+    text = a["text"]
+    user_posted = a["user"]["id_str"]
+    time_posted = a["created_at"]
+    retweets = a["retweet_count"]
+    tup = (tweet_id, text, user_posted, time_posted, retweets)
+
+    mentions = a["entities"]["user_mentions"]
+    for name in mentions:
+        print(name["screen_name"])
+    cur.execute('''INSERT INTO Tweets (
+                    tweet_id,
+                    text,
+                    user_posted,
+                    time_posted,
+                    retweets)
+                    VALUES (?,?,?,?,?)
+                    ''', tup)
+conn.commit()
 
 
 ## HINT: There's a Tweepy method to get user info, so when you have a
@@ -139,7 +160,8 @@ conn.commit()
 # Make a query to select all of the records in the Users database.
 # Save the list of tuples in a variable called users_info.
 
-users_info = True
+users_info = cur.execute("SELECT * FROM Users").fetchall()
+print(users_info)
 
 # Make a query to select all of the user screen names from the database.
 # Save a resulting list of strings (NOT tuples, the strings inside them!)
