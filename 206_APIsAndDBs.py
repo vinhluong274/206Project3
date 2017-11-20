@@ -4,6 +4,7 @@
 
 ##THIS STARTER CODE DOES NOT RUN!!
 
+# Github Link: https://github.com/vinhluong274/206Project3
 
 ##OBJECTIVE:
 ## In this assignment you will be creating database and loading data
