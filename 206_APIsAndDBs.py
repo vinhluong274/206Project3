@@ -63,7 +63,7 @@ conn = sqlite3.connect('206_APIsAndDBs.sqlite')
 cur = conn.cursor() #initiate sqlite connection
 
 # Define your function get_user_tweets here:
-def get_user_tweets(user):
+def get_user_tweets(user): #user variable is the twitter handle passed into this function
     # checks cache to see if user is in the cache before making Twitter request request
     if user in CACHE_DICTION:
         print("Data was in the cache \n")
@@ -71,7 +71,7 @@ def get_user_tweets(user):
     else:
         print("Making a request for new data...\n")
         data = api.user_timeline(user) #gathers the most recent 20 tweets from user's timeline
-        CACHE_DICTION[user] =  data
+        CACHE_DICTION[user] = data
         dumped_json_cache = json.dumps(CACHE_DICTION) #opens file as cache and dumps tweet info into file.
         fw = open(CACHE_FNAME,"w")
         fw.write(dumped_json_cache)
